@@ -1,0 +1,4 @@
+- Person A: Mobile (offline first)
+- Person B: Backend APIs
+- Person C: AI + classification
+- Person D: Demo & testing
