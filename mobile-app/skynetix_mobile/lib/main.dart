@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'offline/offline_emergency_screen.dart';
+
 import 'offline/connectivity_service.dart';
+import 'offline/offline_emergency_screen.dart';
 
 void main() {
   runApp(const SkynetixApp());
@@ -12,7 +13,6 @@ class SkynetixApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       home: StreamBuilder<bool>(
         stream: ConnectivityService().isOnline,
         initialData: true,
@@ -20,10 +20,9 @@ class SkynetixApp extends StatelessWidget {
           final isOnline = snapshot.data ?? false;
 
           if (!isOnline) {
-            return const OfflineEmergencyScreen();
+            return OfflineEmergencyScreen();
           }
 
-          // Online placeholder (INTENTIONALLY EMPTY)
           return const Scaffold(
             body: Center(
               child: Text(
