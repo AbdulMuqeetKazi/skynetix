@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'offline/connectivity_service.dart';
 import 'offline/offline_emergency_screen.dart';
+import 'intake/intake_screen.dart';
 
 void main() {
   runApp(const SkynetixApp());
@@ -23,14 +24,8 @@ class SkynetixApp extends StatelessWidget {
             return OfflineEmergencyScreen();
           }
 
-          return const Scaffold(
-            body: Center(
-              child: Text(
-                'Online mode (under development)',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          );
+          // 🔵 Phase C3 starts here
+          return const IntakeScreen();
         },
       ),
     );
