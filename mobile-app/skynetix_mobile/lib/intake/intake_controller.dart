@@ -1,6 +1,4 @@
 import '../core/models/emergency_session.dart';
-import '../core/enums/emergency_type.dart';
-import '../core/enums/severity_level.dart';
 import 'intake_state.dart';
 import 'emergency_parser.dart';
 
