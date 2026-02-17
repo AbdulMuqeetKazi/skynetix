@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-
+import '../offline/connectivity_service.dart';
 import 'intake_controller.dart';
 import 'intake_state.dart';
+import 'intake_fallback.dart';
 
 class IntakeScreen extends StatefulWidget {
   const IntakeScreen({super.key});
@@ -10,11 +12,51 @@ class IntakeScreen extends StatefulWidget {
   State<IntakeScreen> createState() => _IntakeScreenState();
 }
 
-class _IntakeScreenState extends State<IntakeScreen> {
+class _IntakeScreenState extends State<IntakeScreen>
+    with WidgetsBindingObserver {
   final IntakeController _controller = IntakeController();
   final TextEditingController _textController = TextEditingController();
 
+  StreamSubscription<bool>? _connectivitySub;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+
+    _connectivitySub =
+        ConnectivityService().isOnline.listen((isOnline) {
+      if (!isOnline && mounted) {
+        IntakeFallback.toOffline(context);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _connectivitySub?.cancel();
+    _textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      ConnectivityService().isOnline.first.then((isOnline) {
+        if (!isOnline && mounted) {
+          IntakeFallback.toOffline(context);
+        }
+      });
+    }
+  }
+
   void _refresh() {
+    if (_controller.state == IntakeState.error && mounted) {
+      IntakeFallback.toOffline(context);
+      return;
+    }
+
     setState(() {});
   }
 
@@ -31,7 +73,6 @@ class _IntakeScreenState extends State<IntakeScreen> {
           children: [
             _StateIndicator(state: _controller.state),
             const SizedBox(height: 16),
-
             TextField(
               controller: _textController,
               maxLines: 4,
@@ -40,7 +81,6 @@ class _IntakeScreenState extends State<IntakeScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 16),
 
             if (_controller.state == IntakeState.idle)
@@ -64,7 +104,7 @@ class _IntakeScreenState extends State<IntakeScreen> {
             if (_controller.state == IntakeState.processing)
               ElevatedButton(
                 onPressed: () {
-                  _controller.complete();
+                  _controller.complete(_textController.text);
                   _refresh();
                 },
                 child: const Text('Submit Emergency'),
@@ -85,24 +125,6 @@ class _IntakeScreenState extends State<IntakeScreen> {
                       _refresh();
                     },
                     child: const Text('Reset'),
-                  ),
-                ],
-              ),
-
-            if (_controller.state == IntakeState.error)
-              Column(
-                children: [
-                  const Text(
-                    'Something went wrong.',
-                    style: TextStyle(color: Colors.red),
-                  ),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      _controller.reset();
-                      _refresh();
-                    },
-                    child: const Text('Retry'),
                   ),
                 ],
               ),

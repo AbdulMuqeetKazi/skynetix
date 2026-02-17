@@ -31,6 +31,7 @@ class ParsedEmergency {
 /// Converts user text into [ParsedEmergency]. Empty or invalid input
 /// returns safe defaults; never throws.
 class EmergencyParser {
+  const EmergencyParser();
   /// Parses [input] into a structured [ParsedEmergency].
   ///
   /// Safe for any string; returns defaults for empty or bad input.

@@ -1,6 +1,7 @@
-class IntakeFallback {
-  const IntakeFallback._(); // prevent instantiation
+import 'package:flutter/material.dart';
+import '../offline/offline_emergency_screen.dart';
 
+class IntakeFallback {
   static void toOffline(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(
       MaterialPageRoute(

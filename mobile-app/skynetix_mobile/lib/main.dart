@@ -21,7 +21,7 @@ class SkynetixApp extends StatelessWidget {
           final isOnline = snapshot.data ?? false;
 
           if (!isOnline) {
-            return OfflineEmergencyScreen();
+            return const OfflineEmergencyScreen();
           }
 
           // 🔵 Phase C3 starts here
